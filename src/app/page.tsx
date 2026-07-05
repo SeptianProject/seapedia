@@ -1,5 +1,6 @@
 import ProductCard from "@/components/ui/ProductCard";
 import ReviewForm from "@/components/ReviewForm";
+import prisma from "@/lib/prisma";
 
 interface Product {
   id: string;
@@ -13,16 +14,27 @@ interface ProductsResponse {
   data: Product[];
 }
 
-// Server-side fetch, no-store biar data produk selalu fresh (stock berubah cepat)
 async function getProducts(): Promise<Product[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, {
-    cache: "no-store",
-  });
+  try {
+    const products = await prisma.product.findMany({
+      include: {
+        store: { select: { name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 12,
+    });
 
-  if (!res.ok) return [];
-
-  const json: ProductsResponse = await res.json();
-  return json.data;
+    return products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      price: product.price.toString(),
+      imageUrl: product.imageUrl,
+      store: { name: product.store.name },
+    }));
+  } catch (error) {
+    console.error("[HOME_PRODUCTS_ERROR]", error);
+    return [];
+  }
 }
 
 export default async function HomePage() {
