@@ -62,9 +62,24 @@ export default function SellerProductsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Produk Saya</h1>
+    <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mb-6 rounded-3xl border border-white/70 bg-slate-950 px-6 py-6 text-white shadow-2xl shadow-slate-900/10">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-200">
+          Seller dashboard
+        </p>
+        <h1 className="mt-2 text-3xl font-black">Produk Saya</h1>
+        <p className="mt-2 text-sm text-slate-300">
+          Tambah, ubah, dan hapus produk dari etalase toko Anda.
+        </p>
+      </div>
+
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900">Daftar Produk</h2>
+          <p className="text-sm text-slate-500">
+            Atur stok dan harga secara langsung.
+          </p>
+        </div>
         <Button
           onClick={() => {
             setEditingProduct(null);
@@ -75,15 +90,17 @@ export default function SellerProductsPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-400">Memuat...</p>
+        <p className="text-slate-500">Memuat...</p>
       ) : products.length === 0 ? (
-        <p className="text-gray-500">
-          Belum ada produk. Tambahkan produk pertama Anda.
-        </p>
+        <div className="rounded-3xl border border-white/70 bg-white/85 p-8 text-center shadow-sm backdrop-blur-sm">
+          <p className="text-slate-500">
+            Belum ada produk. Tambahkan produk pertama Anda.
+          </p>
+        </div>
       ) : (
-        <div className="border rounded-xl overflow-hidden bg-white">
+        <div className="overflow-hidden rounded-3xl border border-white/70 bg-white/85 shadow-sm backdrop-blur-sm">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-left text-gray-500">
+            <thead className="bg-slate-50 text-left text-slate-500">
               <tr>
                 <th className="px-4 py-3">Nama</th>
                 <th className="px-4 py-3">Harga</th>
@@ -94,27 +111,29 @@ export default function SellerProductsPage() {
             <tbody>
               {products.map((p) => (
                 <tr key={p.id} className="border-t">
-                  <td className="px-4 py-3">{p.name}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 font-medium text-slate-900">
+                    {p.name}
+                  </td>
+                  <td className="px-4 py-3 text-slate-700">
                     {new Intl.NumberFormat("id-ID", {
                       style: "currency",
                       currency: "IDR",
                       minimumFractionDigits: 0,
                     }).format(Number(p.price))}
                   </td>
-                  <td className="px-4 py-3">{p.stock}</td>
-                  <td className="px-4 py-3 text-right space-x-2">
+                  <td className="px-4 py-3 text-slate-700">{p.stock}</td>
+                  <td className="px-4 py-3 space-x-2 text-right">
                     <button
                       onClick={() => {
                         setEditingProduct(p);
                         setModalOpen(true);
                       }}
-                      className="text-blue-600 hover:underline">
+                      className="font-medium text-blue-700 hover:text-blue-800">
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(p.id)}
-                      className="text-red-600 hover:underline">
+                      className="font-medium text-red-600 hover:text-red-700">
                       Hapus
                     </button>
                   </td>

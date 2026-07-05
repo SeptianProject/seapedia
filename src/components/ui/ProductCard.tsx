@@ -62,20 +62,30 @@ export default function ProductCard({
   }
 
   return (
-    <div className="border rounded-xl overflow-hidden hover:shadow-lg transition-shadow duration-200 bg-white flex flex-col">
-      <div className="relative w-full aspect-square bg-gray-100">
+    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/70 bg-white/85 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <div className="relative aspect-square w-full bg-gradient-to-br from-slate-100 to-slate-200">
         {imageUrl ? (
-          <Image src={imageUrl} alt={name} fill className="object-cover" />
+          <Image
+            src={imageUrl}
+            alt={name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+          <div className="flex h-full items-center justify-center text-sm text-slate-400">
             No Image
           </div>
         )}
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900/35 to-transparent" />
       </div>
-      <div className="p-3 flex flex-col gap-1 flex-1">
-        <h3 className="font-semibold text-gray-900 line-clamp-1">{name}</h3>
-        <p className="text-blue-600 font-bold">{formattedPrice}</p>
-        <p className="text-xs text-gray-500 mb-2">{store.name}</p>
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <h3 className="line-clamp-1 text-base font-semibold text-slate-900">
+          {name}
+        </h3>
+        <p className="text-lg font-bold text-blue-700">{formattedPrice}</p>
+        <p className="text-xs uppercase tracking-[0.12em] text-slate-500">
+          {store.name}
+        </p>
         <Button
           variant="primary"
           isLoading={loading}

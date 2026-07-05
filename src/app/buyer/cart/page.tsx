@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/components/ui/Toast";
+import Button from "@/components/ui/Button";
 import CheckoutModal from "@/components/buyer/CheckoutModal";
 
 interface CartItem {
@@ -24,6 +25,14 @@ interface CartData {
   items: CartItem[];
 }
 
+function formatIDR(value: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(value);
+}
+
 export default function CartPage() {
   const { showToast } = useToast();
   const [cart, setCart] = useState<CartData | null>(null);
@@ -39,7 +48,9 @@ export default function CartPage() {
     try {
       const data = await apiFetch<{ cart: CartData | null }>(
         "/api/buyer/cart",
-        { auth: true },
+        {
+          auth: true,
+        },
       );
       setCart(data.cart);
     } catch (err) {
@@ -60,7 +71,7 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-12 text-center text-gray-400">
+      <div className="mx-auto max-w-5xl px-6 py-12 text-center text-slate-500">
         Memuat keranjang...
       </div>
     );
@@ -68,70 +79,76 @@ export default function CartPage() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="max-w-3xl mx-auto px-6 py-12 text-center">
-        <p className="text-gray-500">Keranjang Anda kosong.</p>
+      <div className="mx-auto max-w-5xl px-6 py-12">
+        <div className="rounded-3xl border border-white/70 bg-white/85 p-10 text-center shadow-sm backdrop-blur-sm">
+          <p className="text-slate-600">Keranjang Anda kosong.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-8">
-      <h1 className="text-2xl font-bold mb-1">Keranjang Belanja</h1>
-      <p className="text-sm text-gray-500 mb-6">Toko: {cart.store.name}</p>
-
-      <div className="flex flex-col gap-3">
-        {cart.items.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center gap-4 border rounded-lg p-3 bg-white">
-            <div className="relative w-16 h-16 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-              {item.product.imageUrl && (
-                <Image
-                  src={item.product.imageUrl}
-                  alt={item.product.name}
-                  fill
-                  className="object-cover"
-                />
-              )}
-            </div>
-            <div className="flex-1">
-              <p className="font-medium">{item.product.name}</p>
-              <p className="text-sm text-gray-500">
-                {new Intl.NumberFormat("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                  minimumFractionDigits: 0,
-                }).format(Number(item.product.price))}{" "}
-                × {item.quantity}
-              </p>
-            </div>
-            <p className="font-semibold">
-              {new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-                minimumFractionDigits: 0,
-              }).format(Number(item.product.price) * item.quantity)}
-            </p>
-          </div>
-        ))}
+    <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mb-6 rounded-3xl border border-white/70 bg-slate-950 px-6 py-6 text-white shadow-2xl shadow-slate-900/10">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-200">
+          Buyer checkout
+        </p>
+        <h1 className="mt-2 text-3xl font-black">Keranjang Belanja</h1>
+        <p className="mt-2 text-sm text-slate-300">Toko: {cart.store.name}</p>
       </div>
 
-      <div className="mt-6 border-t pt-4 flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-500">Subtotal</p>
-          <p className="text-xl font-bold">
-            {new Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-              minimumFractionDigits: 0,
-            }).format(subtotal)}
-          </p>
+      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+        <div className="flex flex-col gap-3">
+          {cart.items.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center gap-4 rounded-2xl border border-white/70 bg-white/85 p-4 shadow-sm backdrop-blur-sm">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-slate-100">
+                {item.product.imageUrl && (
+                  <Image
+                    src={item.product.imageUrl}
+                    alt={item.product.name}
+                    fill
+                    className="object-cover"
+                  />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold text-slate-900">
+                  {item.product.name}
+                </p>
+                <p className="text-sm text-slate-500">
+                  {formatIDR(Number(item.product.price))} × {item.quantity}
+                </p>
+              </div>
+              <p className="font-semibold text-slate-900">
+                {formatIDR(Number(item.product.price) * item.quantity)}
+              </p>
+            </div>
+          ))}
         </div>
-        <button
-          onClick={() => setShowCheckout(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
-          Checkout
-        </button>
+
+        <aside className="h-fit rounded-3xl border border-white/70 bg-white/90 p-5 shadow-sm backdrop-blur-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            Ringkasan
+          </p>
+          <div className="mt-4 flex flex-col gap-3 text-sm">
+            <div className="flex items-center justify-between text-slate-600">
+              <span>Subtotal</span>
+              <span className="font-semibold text-slate-900">
+                {formatIDR(subtotal)}
+              </span>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4 text-slate-500">
+              Checkout akan menghitung biaya kirim, pajak, dan diskon final di
+              server.
+            </div>
+          </div>
+
+          <Button onClick={() => setShowCheckout(true)} className="mt-5 w-full">
+            Checkout
+          </Button>
+        </aside>
       </div>
 
       {showCheckout && (

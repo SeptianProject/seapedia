@@ -33,8 +33,10 @@ export default function RoleGuard({ allowedRole, children }: RoleGuardProps) {
 
   if (status === "checking") {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-gray-400">Memverifikasi akses...</p>
+      <div className="flex min-h-[60vh] items-center justify-center px-6">
+        <div className="rounded-2xl border border-white/70 bg-white/80 px-6 py-4 text-slate-500 shadow-sm backdrop-blur-sm">
+          Memverifikasi akses...
+        </div>
       </div>
     );
   }

@@ -41,14 +41,16 @@ export default function ReviewForm() {
 
   if (status === "success") {
     return (
-      <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 text-emerald-700 shadow-sm">
         Terima kasih atas ulasan Anda!
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 rounded-2xl border border-white/70 bg-white/85 p-5 shadow-sm backdrop-blur-sm">
       <Input
         id="reviewer_name"
         label="Nama"
@@ -58,11 +60,11 @@ export default function ReviewForm() {
       />
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Rating</label>
+        <label className="text-sm font-medium text-slate-700">Rating</label>
         <select
           value={rating}
           onChange={(e) => setRating(Number(e.target.value))}
-          className="px-3 py-2 border border-gray-300 rounded-lg">
+          className="rounded-xl border border-slate-200 bg-white/90 px-3.5 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15">
           {[5, 4, 3, 2, 1].map((r) => (
             <option key={r} value={r}>
               {r} Bintang
@@ -74,7 +76,7 @@ export default function ReviewForm() {
       <div className="flex flex-col gap-1">
         <label
           htmlFor="comment_text"
-          className="text-sm font-medium text-gray-700">
+          className="text-sm font-medium text-slate-700">
           Komentar
         </label>
         <textarea
@@ -82,7 +84,7 @@ export default function ReviewForm() {
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           rows={4}
-          className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="rounded-xl border border-slate-200 bg-white/90 px-3.5 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15"
           required
         />
       </div>

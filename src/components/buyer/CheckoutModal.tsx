@@ -66,64 +66,85 @@ export default function CheckoutModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-xl w-full max-w-md p-6">
-        <h2 className="text-xl font-bold mb-4">Checkout</h2>
-
-        <div className="flex flex-col gap-1 mb-4">
-          <label className="text-sm font-medium text-gray-700">
-            Metode Pengiriman
-          </label>
-          <select
-            value={deliveryMethod}
-            onChange={(e) =>
-              setDeliveryMethod(e.target.value as typeof deliveryMethod)
-            }
-            className="px-3 py-2 border border-gray-300 rounded-lg">
-            <option value="REGULAR">
-              Regular — {formatIDR(DELIVERY_FEE.REGULAR)}
-            </option>
-            <option value="NEXT_DAY">
-              Next Day — {formatIDR(DELIVERY_FEE.NEXT_DAY)}
-            </option>
-            <option value="INSTANT">
-              Instant — {formatIDR(DELIVERY_FEE.INSTANT)}
-            </option>
-          </select>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg rounded-[2rem] border border-white/70 bg-white p-6 shadow-2xl">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Checkout
+            </p>
+            <h2 className="mt-1 text-2xl font-black text-slate-900">
+              Konfirmasi Pesanan
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-full border border-slate-200 px-3 py-1 text-sm text-slate-500 transition hover:bg-slate-50">
+            Tutup
+          </button>
         </div>
 
-        <Input
-          id="discount_code"
-          label="Kode Diskon (opsional)"
-          value={discountCode}
-          onChange={(e) => setDiscountCode(e.target.value)}
-          placeholder="Contoh: DISKON10"
-          className="mb-4"
-        />
+        <div className="mt-6 flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-slate-700">
+              Metode Pengiriman
+            </label>
+            <select
+              value={deliveryMethod}
+              onChange={(e) =>
+                setDeliveryMethod(e.target.value as typeof deliveryMethod)
+              }
+              className="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 shadow-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/15">
+              <option value="REGULAR">
+                Regular — {formatIDR(DELIVERY_FEE.REGULAR)}
+              </option>
+              <option value="NEXT_DAY">
+                Next Day — {formatIDR(DELIVERY_FEE.NEXT_DAY)}
+              </option>
+              <option value="INSTANT">
+                Instant — {formatIDR(DELIVERY_FEE.INSTANT)}
+              </option>
+            </select>
+          </div>
 
-        <div className="border-t pt-3 flex flex-col gap-1 text-sm mb-6">
-          <div className="flex justify-between">
-            <span className="text-gray-500">Subtotal</span>
-            <span>{formatIDR(subtotal)}</span>
+          <Input
+            id="discount_code"
+            label="Kode Diskon (opsional)"
+            value={discountCode}
+            onChange={(e) => setDiscountCode(e.target.value)}
+            placeholder="Contoh: DISKON10"
+          />
+
+          <div className="rounded-2xl bg-slate-50 p-4 text-sm">
+            <div className="flex justify-between text-slate-600">
+              <span>Subtotal</span>
+              <span className="font-semibold text-slate-900">
+                {formatIDR(subtotal)}
+              </span>
+            </div>
+            <div className="mt-2 flex justify-between text-slate-600">
+              <span>Biaya Kirim</span>
+              <span className="font-semibold text-slate-900">
+                {formatIDR(deliveryFee)}
+              </span>
+            </div>
+            <div className="mt-2 flex justify-between text-slate-600">
+              <span>PPN 12%</span>
+              <span className="font-semibold text-slate-900">
+                {formatIDR(taxAmount)}
+              </span>
+            </div>
+            <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-3 text-base font-bold text-slate-900">
+              <span>Estimasi Total</span>
+              <span>{formatIDR(estimatedTotal)}</span>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">
+              Diskon dihitung final oleh server jika kode valid.
+            </p>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">Biaya Kirim</span>
-            <span>{formatIDR(deliveryFee)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">PPN 12%</span>
-            <span>{formatIDR(taxAmount)}</span>
-          </div>
-          <div className="flex justify-between font-bold text-base pt-2 border-t mt-1">
-            <span>Estimasi Total</span>
-            <span>{formatIDR(estimatedTotal)}</span>
-          </div>
-          <p className="text-xs text-gray-400 mt-1">
-            *Diskon dihitung final oleh server jika kode valid
-          </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="mt-6 flex gap-3">
           <Button variant="secondary" onClick={onClose} className="flex-1">
             Batal
           </Button>
