@@ -27,7 +27,8 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
 
   const canSubmit = useMemo(
-    () => username.trim().length > 0 && password.length >= 6 && roles.length > 0,
+    () =>
+      username.trim().length > 0 && password.length >= 6 && roles.length > 0,
     [username, password, roles],
   );
 
@@ -95,8 +96,7 @@ export default function RegisterPage() {
             {ROLE_OPTIONS.map((role) => (
               <label
                 key={role}
-                className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700"
-              >
+                className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700">
                 <input
                   type="checkbox"
                   checked={roles.includes(role)}
@@ -111,13 +111,20 @@ export default function RegisterPage() {
         {error && <p className="text-sm text-red-500">{error}</p>}
         {success && <p className="text-sm text-green-600">{success}</p>}
 
-        <Button type="submit" isLoading={loading} disabled={!canSubmit} className="w-full">
+        <Button
+          type="submit"
+          isLoading={loading}
+          disabled={!canSubmit}
+          className="w-full">
           Register
         </Button>
       </form>
 
       <p className="text-sm text-gray-500 mt-4">
-        Sudah punya akun? <a href="/login" className="text-blue-600 font-medium">Login</a>
+        Sudah punya akun?{" "}
+        <a href="/login" className="text-blue-600 font-medium">
+          Login
+        </a>
       </p>
     </div>
   );
