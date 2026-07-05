@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcrypt";
-import prisma from "@/lib/prisma";
+
+export const runtime = "nodejs";
 
 interface RegisterBody {
   username: string;
@@ -12,6 +12,11 @@ const VALID_ROLES = ["Admin", "Seller", "Buyer", "Driver"];
 
 export async function POST(req: NextRequest) {
   try {
+    const [{ default: bcrypt }, { default: prisma }] = await Promise.all([
+      import("bcrypt"),
+      import("@/lib/prisma"),
+    ]);
+
     const body: RegisterBody = await req.json();
     const { username, password, roles } = body;
 
