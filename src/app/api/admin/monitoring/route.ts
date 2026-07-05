@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import type { $Enums } from "../../../../../generated/prisma/client";
 
-const HELD_STATUSES = [
+const HELD_STATUSES: $Enums.OrderStatus[] = [
   "PENDING",
   "PROCESSING",
   "READY_FOR_DELIVERY",
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
         prisma.order.count({ where: { status: "DELIVERED" } }),
         prisma.store.count(),
         prisma.order.findMany({
-          where: { status: { in: HELD_STATUSES as unknown as string[] } },
+          where: { status: { in: HELD_STATUSES } },
           include: {
             buyer: { select: { username: true } },
             store: { select: { name: true } },

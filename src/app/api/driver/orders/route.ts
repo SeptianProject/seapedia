@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const orders = await prisma.order.findMany({
       where: { status: "READY_FOR_DELIVERY", driverId: null },
       include: {
-        store: { select: { id: true, name: true, address: true } },
+        store: { select: { id: true, name: true } },
         buyer: { select: { id: true, username: true } },
         items: { include: { product: { select: { name: true } } } },
       },
