@@ -1,12 +1,14 @@
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+function getSecretKey() {
+  const jwtSecret = process.env.JWT_SECRET;
 
-if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET is not defined in environment variables");
+  if (!jwtSecret) {
+    throw new Error("JWT_SECRET is not defined in environment variables");
+  }
+
+  return new TextEncoder().encode(jwtSecret);
 }
-
-const secretKey = new TextEncoder().encode(JWT_SECRET);
 
 export interface UserTokenPayload extends JWTPayload {
   sub: string;
@@ -19,6 +21,8 @@ export async function signToken(
   payload: UserTokenPayload,
   expiresIn: string = "2h",
 ): Promise<string> {
+  const secretKey = getSecretKey();
+
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -30,6 +34,7 @@ export async function verifyToken(
   token: string,
 ): Promise<UserTokenPayload | null> {
   try {
+    const secretKey = getSecretKey();
     const { payload } = await jwtVerify(token, secretKey);
     return payload as UserTokenPayload;
   } catch (error) {
