@@ -82,3 +82,34 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const userId = req.headers.get("x-user-id");
+    const activeRole = req.headers.get("x-active-role");
+
+    if (!userId || activeRole !== "Seller") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const store = await prisma.store.findUnique({ where: { ownerId: userId } });
+    if (!store) {
+      return NextResponse.json({ data: [] });
+    }
+
+    const products = await prisma.product.findMany({
+      where: { storeId: store.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({
+      data: products.map((p) => ({ ...p, price: p.price.toString() })),
+    });
+  } catch (error) {
+    console.error("[GET_SELLER_PRODUCTS_ERROR]", error);
+    return NextResponse.json(
+      { error: "Terjadi kesalahan pada server" },
+      { status: 500 },
+    );
+  }
+}
