@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import DOMPurify from "isomorphic-dompurify";
 
 interface CreateReviewBody {
   reviewer_name: string;
@@ -21,16 +22,30 @@ export async function POST(req: NextRequest) {
 
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
       return NextResponse.json(
-        { error: "rating harus berupa integer antara 1-5" },
+        { error: "rating harus integer antara 1-5" },
+        { status: 400 },
+      );
+    }
+
+    const sanitizedComment = DOMPurify.sanitize(comment_text.trim(), {
+      ALLOWED_TAGS: [],
+    });
+    const sanitizedName = DOMPurify.sanitize(reviewer_name.trim(), {
+      ALLOWED_TAGS: [],
+    });
+
+    if (!sanitizedComment) {
+      return NextResponse.json(
+        { error: "comment_text tidak valid setelah sanitasi" },
         { status: 400 },
       );
     }
 
     const review = await prisma.appReview.create({
       data: {
-        reviewerName: reviewer_name.trim(),
+        reviewerName: sanitizedName,
         rating,
-        commentText: comment_text.trim(),
+        commentText: sanitizedComment,
       },
     });
 
@@ -40,39 +55,6 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     console.error("[CREATE_REVIEW_ERROR]", error);
-    return NextResponse.json(
-      { error: "Terjadi kesalahan pada server" },
-      { status: 500 },
-    );
-  }
-}
-
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const page = Math.max(1, Number(searchParams.get("page")) || 1);
-    const limit = Math.min(50, Number(searchParams.get("limit")) || 10);
-
-    const [reviews, total] = await prisma.$transaction([
-      prisma.appReview.findMany({
-        orderBy: { createdAt: "desc" },
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.appReview.count(),
-    ]);
-
-    return NextResponse.json({
-      data: reviews,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    });
-  } catch (error) {
-    console.error("[GET_REVIEWS_ERROR]", error);
     return NextResponse.json(
       { error: "Terjadi kesalahan pada server" },
       { status: 500 },

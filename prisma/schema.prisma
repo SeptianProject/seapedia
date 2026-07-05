@@ -19,6 +19,7 @@ model User {
   carts  Cart[]
   ordersAsBuyer  Order[] @relation("BuyerOrders")
   ordersAsDriver Order[] @relation("DriverOrders")
+  wallet Wallet?
 
   @@map("users")
 }
@@ -139,25 +140,83 @@ enum OrderStatus {
   ON_DELIVERY
   DELIVERED
   CANCELLED
+  RETURNED
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  buyerId     String
-  storeId     String
-  driverId    String?     // null = belum diambil driver
-  status      OrderStatus @default(PENDING)
-  totalAmount Decimal     @db.Decimal(12, 2)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id             String         @id @default(cuid())
+  buyerId        String
+  storeId        String
+  driverId       String?
+  status         OrderStatus    @default(PENDING)
 
-  buyer  User        @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
-  store  Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  driver User?       @relation("DriverOrders", fields: [driverId], references: [id], onDelete: SetNull)
-  items  OrderItem[]
+  subtotal       Decimal        @db.Decimal(12, 2)
+  discountId     String?
+  discountAmount Decimal        @default(0) @db.Decimal(12, 2)
+  deliveryMethod DeliveryMethod
+  deliveryFee    Decimal        @db.Decimal(12, 2)
+  taxAmount      Decimal        @db.Decimal(12, 2) // PPN 12%
+  totalAmount    Decimal        @db.Decimal(12, 2) // subtotal - discount + deliveryFee + tax
+
+  dueAt          DateTime       
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  buyer    User       @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Cascade)
+  store    Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  driver   User?      @relation("DriverOrders", fields: [driverId], references: [id], onDelete: SetNull)
+  discount Discount?  @relation(fields: [discountId], references: [id], onDelete: SetNull)
+  items    OrderItem[]
 
   @@index([buyerId])
   @@index([storeId])
   @@index([status])
+  @@index([dueAt]) 
   @@map("orders")
 }
+
+enum DiscountType {
+  VOUCHER 
+  PROMO  
+}
+
+enum DiscountValueType {
+  PERCENTAGE
+  FIXED
+}
+
+model Discount {
+  id           String            @id @default(cuid())
+  code         String?           @unique
+  type         DiscountType
+  valueType    DiscountValueType
+  value        Decimal           @db.Decimal(12, 2)
+  maxDiscount  Decimal?          @db.Decimal(12, 2) 
+  minPurchase  Decimal           @default(0) @db.Decimal(12, 2)
+  isActive     Boolean           @default(true)
+  expiresAt    DateTime?
+  createdAt    DateTime          @default(now())
+
+  orders Order[]
+
+  @@map("discounts")
+}
+
+enum DeliveryMethod {
+  INSTANT
+  NEXT_DAY
+  REGULAR
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  balance   Decimal  @default(0) @db.Decimal(12, 2)
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("wallets")
+}
+
