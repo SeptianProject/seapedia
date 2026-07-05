@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -28,8 +29,6 @@ export default function SellerProductsPage() {
   async function loadProducts() {
     setLoading(true);
     try {
-      // Filter produk milik toko sendiri lewat query search kosong + client-side filter
-      // Cara lebih tepat: buat GET /api/seller/products khusus, tapi ini bisa reuse /api/products
       const data = await apiFetch<{ data: Product[] }>("/api/seller/products", {
         auth: true,
       });

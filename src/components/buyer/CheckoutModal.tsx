@@ -1,4 +1,4 @@
-// components/buyer/CheckoutModal.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -40,7 +40,6 @@ export default function CheckoutModal({
   const [discountCode, setDiscountCode] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Preview only — nilai final dihitung ulang di backend
   const deliveryFee = DELIVERY_FEE[deliveryMethod];
   const taxAmount = subtotal * TAX_RATE;
   const estimatedTotal = subtotal + deliveryFee + taxAmount;
@@ -67,7 +66,7 @@ export default function CheckoutModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-[2rem] border border-white/70 bg-white p-6 shadow-2xl">
+      <div className="w-full max-w-lg rounded-4xl border border-white/70 bg-white p-6 shadow-2xl">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">

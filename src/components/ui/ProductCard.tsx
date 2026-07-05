@@ -51,7 +51,6 @@ export default function ProductCard({
       });
       showToast("Produk ditambahkan ke keranjang");
     } catch (err) {
-      // Pesan spesifik dari backend, termasuk error single-store checkout
       showToast(
         err instanceof Error ? err.message : "Gagal menambah ke keranjang",
         "error",
@@ -63,7 +62,7 @@ export default function ProductCard({
 
   return (
     <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/70 bg-white/85 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <div className="relative aspect-square w-full bg-gradient-to-br from-slate-100 to-slate-200">
+      <div className="relative aspect-square w-full bg-linear-to-br from-slate-100 to-slate-200">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -76,7 +75,7 @@ export default function ProductCard({
             No Image
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900/35 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-slate-900/35 to-transparent" />
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
         <h3 className="line-clamp-1 text-base font-semibold text-slate-900">

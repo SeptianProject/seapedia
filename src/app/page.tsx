@@ -10,9 +10,6 @@ interface Product {
   store: { name: string };
 }
 
-interface ProductsResponse {
-  data: Product[];
-}
 
 async function getProducts(): Promise<Product[]> {
   try {
@@ -46,7 +43,7 @@ export default async function HomePage() {
       <div className="absolute right-0 top-32 h-56 w-56 rounded-full bg-sky-300/20 blur-3xl" />
 
       <section className="relative overflow-hidden rounded-3xl border border-white/70 bg-slate-950 px-6 py-10 text-white shadow-2xl shadow-slate-900/10 md:px-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(56,189,248,0.28),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(59,130,246,0.2),_transparent_28%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.28),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.2),transparent_28%)]" />
         <div className="relative max-w-2xl space-y-5">
           <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-sky-100">
             Marketplace management
