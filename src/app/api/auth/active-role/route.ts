@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 import { verifyToken, signToken } from "@/lib/jwt";
 
 interface ActiveRoleBody {
@@ -25,24 +26,46 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { role }: ActiveRoleBody = await req.json();
+    const body: ActiveRoleBody = await req.json();
+    const { role } = body;
 
-    if (!role || !payload.roles.includes(role)) {
+    if (!role) {
       return NextResponse.json(
-        { error: "Role yang dipilih tidak dimiliki oleh user ini" },
+        { error: "Field 'role' wajib diisi" },
+        { status: 400 },
+      );
+    }
+
+    const userRole = await prisma.userRole.findFirst({
+      where: {
+        userId: payload.sub,
+        role: { name: role },
+      },
+      include: { role: true },
+    });
+
+    if (!userRole) {
+      return NextResponse.json(
+        { error: `User tidak memiliki role '${role}'` },
         { status: 403 },
       );
     }
 
+    const allUserRoles = await prisma.userRole.findMany({
+      where: { userId: payload.sub },
+      include: { role: true },
+    });
+    const roleNames = allUserRoles.map((ur) => ur.role.name);
+
     const newToken = await signToken({
       sub: payload.sub,
       username: payload.username,
-      roles: payload.roles,
-      activeRole: role,
+      roles: roleNames,
+      activeRole: userRole.role.name,
     });
 
     return NextResponse.json({
-      message: `Active role berhasil diset ke ${role}`,
+      message: `Active role berhasil diset ke ${userRole.role.name}`,
       token: newToken,
     });
   } catch (error) {
